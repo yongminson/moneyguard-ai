@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { supabase } from '../lib/db'; // Supabase DB 연결 (경로 확인)
+import { supabase } from '../lib/db'; 
 
-// 🚀 스크롤 시 숫자가 올라가는 카운터 컴포넌트
+// 🚀 숫자가 올라가는 카운터
 const CountUp = ({ end, suffix = "", duration = 2000 }: { end: number, suffix?: string, duration?: number }) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ const CountUp = ({ end, suffix = "", duration = 2000 }: { end: number, suffix?: 
   return <div ref={ref} className="text-4xl md:text-5xl font-black text-blue-600">{count.toLocaleString()}{suffix}</div>;
 };
 
-// 🚀 스크롤 시 부드럽게 나타나는 페이드인 컴포넌트
+// 🚀 부드러운 페이드인
 const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,20 +56,13 @@ const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: nu
 };
 
 export default function LandingPage() {
-  const [realUserCount, setRealUserCount] = useState(1204); // 초기 세팅값
+  const [realUserCount, setRealUserCount] = useState(1204);
 
-  // 🚀 DB에서 실제 가입자 수 실시간으로 가져오기
   useEffect(() => {
     const fetchRealUsers = async () => {
       try {
-        const { count } = await supabase
-          .from('business_profiles')
-          .select('*', { count: 'exact', head: true });
-        
-        // 베이스 1200명 + 실제 DB에 가입된 대표님 수 더하기
-        if (count !== null) {
-          setRealUserCount(1200 + count);
-        }
+        const { count } = await supabase.from('business_profiles').select('*', { count: 'exact', head: true });
+        if (count !== null) setRealUserCount(1200 + count);
       } catch (error) {
         console.error("회원수 집계 에러:", error);
       }
@@ -80,7 +73,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
       
-      {/* 글로벌 네비게이션 바 */}
+      {/* 네비게이션 */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 z-50 flex items-center justify-between px-6 md:px-10">
         <div className="flex items-center gap-3">
           <img src="/logo.jpeg" alt="로고" className="h-8 w-auto rounded-md" />
@@ -88,11 +81,11 @@ export default function LandingPage() {
         </div>
         <div className="flex gap-4 items-center">
           <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors hidden md:block">로그인</Link>
-          <Link href="/login" className="text-sm font-black bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105">무료 진단하기</Link>
+          <Link href="/login" className="text-sm font-black bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition-all shadow-md transform hover:scale-105">무료 진단하기</Link>
         </div>
       </nav>
 
-      {/* 1. 히어로(Hero) 섹션 */}
+      {/* 1. 히어로 섹션 (홀로그램 여성 이미지 적용) */}
       <header className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 flex flex-col items-center text-center bg-gradient-to-b from-blue-50 to-white relative">
         <FadeIn>
           <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 font-black text-xs md:text-sm rounded-full mb-6 border border-blue-200 shadow-sm">
@@ -116,29 +109,16 @@ export default function LandingPage() {
           </Link>
         </FadeIn>
 
-        {/* 🚀 대기업 스타일 대형 서비스 이미지 (목업) 영역 */}
+        {/* 대형 서비스 이미지 (hero-mockup.png) */}
         <FadeIn delay={800}>
-          <div className="mt-16 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-200 relative aspect-[16/9] bg-gray-100 flex items-center justify-center group">
-             {/* 이미지가 없을 때 보여지는 플레이스홀더 (나중에 이미지 넣으면 뒤로 숨겨짐) */}
-             <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-0">
-                 <span className="text-4xl md:text-6xl mb-4">🖥️</span>
-                 <p className="font-bold text-sm md:text-lg text-gray-600">서비스 대시보드 이미지가 들어갈 자리입니다</p>
-                 <p className="text-xs md:text-sm mt-2">VS Code <span className="text-blue-500 font-bold">public 폴더</span>에 <span className="text-blue-500 font-bold">hero-mockup.png</span> 파일을 넣어주세요!</p>
-             </div>
-             {/* 실제 대표님이 올리실 이미지 */}
-             <img 
-               src="/hero-mockup.png" 
-               alt="머니가드 대시보드" 
-               className="w-full h-full object-cover relative z-10 opacity-0 transition-opacity duration-700" 
-               onLoad={(e) => e.currentTarget.classList.remove('opacity-0')}
-               onError={(e) => e.currentTarget.style.display = 'none'}
-             />
+          <div className="mt-16 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-200 relative">
+             <img src="/hero-mockup.png" alt="머니가드 대시보드" className="w-full h-auto object-cover" />
           </div>
         </FadeIn>
       </header>
 
-      {/* 2. 페인포인트(Pain Point) 섹션 */}
-      <section className="py-20 bg-white px-6 mt-10 md:mt-20">
+      {/* 2. 페인포인트 섹션 */}
+      <section className="py-20 bg-white px-6 mt-10 md:mt-12">
         <div className="max-w-6xl mx-auto text-center">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-black mb-16 text-gray-900">바쁜 사장님을 대신해 <span className="text-blue-600 border-b-4 border-blue-200">머니가드 시스템이 야근합니다</span></h2>
@@ -147,7 +127,7 @@ export default function LandingPage() {
             {[
               { icon: "📄", title: "끝도 없는 한글(HWP) 파일", desc: "읽어도 무슨 말인지 모를 공고문, 데이터 엔진이 핵심만 요약해 드립니다." },
               { icon: "⏳", title: "번번이 놓치는 예산 마감일", desc: "예산 소진 80% 임박 공고부터 마감 D-7 공고까지 실시간으로 알람을 드립니다." },
-              { icon: "🤯", title: "야근하며 쓴 서류, 또 광탈?", desc: "심사위원이 좋아하는 핵심 키워드를 반영한 사업계획서 초안을 10초 만에 뽑아줍니다." }
+              { icon: "🤯", title: "야근하며 쓴 서류, 또 광탈?", desc: "심사위원이 좋아하는 핵심 키워드를 반영한 사업계획서 초안을 즉시 뽑아줍니다." }
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 200}>
                 <div className="p-8 bg-gray-50 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-shadow">
@@ -161,7 +141,34 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. 소셜 프루프 (숫자로 증명 - 실시간 DB 연동) */}
+      {/* 2-5. 휴먼 터치 팀 섹션 (team.png 적용) */}
+      <section className="py-20 bg-gray-50 px-6 border-t border-gray-100">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 space-y-6">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
+                단순한 데이터 시스템을 넘어,<br/>
+                <span className="text-blue-600">상위 1% 전문가 팀</span>이 함께합니다.
+              </h2>
+              <p className="text-gray-500 font-medium leading-relaxed text-lg mt-4">
+                빅데이터가 찾아낸 최적의 공고를 바탕으로, YM Studio의 전문 컨설턴트들이 사장님의 비즈니스 구조를 꼼꼼히 분석하고 완벽한 지원 전략을 수립합니다.
+              </p>
+              <ul className="mt-6 space-y-3 font-bold text-gray-700">
+                <li className="flex items-center gap-2">✔️ <span className="text-gray-600 font-medium">기업 맞춤형 자금 조달 로드맵 설계</span></li>
+                <li className="flex items-center gap-2">✔️ <span className="text-gray-600 font-medium">전문 심사역 시각의 사업계획서 첨삭</span></li>
+                <li className="flex items-center gap-2">✔️ <span className="text-gray-600 font-medium">1:1 프라이빗 비즈니스 컨설팅 지원</span></li>
+              </ul>
+            </FadeIn>
+          </div>
+          <div className="flex-1 w-full">
+            <FadeIn delay={200}>
+              <img src="/team.png" alt="머니가드 전문가 팀" className="w-full rounded-3xl shadow-lg border border-gray-200" />
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. 소셜 프루프 (숫자 카운팅) */}
       <section className="py-24 bg-gray-900 text-white px-6">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-around items-center text-center gap-16 md:gap-0">
           <div className="space-y-3">
@@ -175,14 +182,20 @@ export default function LandingPage() {
           </div>
           <div className="w-full md:w-px h-px md:h-24 bg-gray-700"></div>
           <div className="space-y-3">
-            {/* 🚀 실시간 유저 데이터가 여기에 반영됩니다! */}
             <p className="text-gray-400 font-bold text-sm uppercase tracking-widest">머니가드와 함께하는 대표님</p>
             <CountUp end={realUserCount} suffix=" 명" /> 
           </div>
         </div>
       </section>
 
-      {/* 4. 핵심 솔루션 섹션 */}
+      {/* 3-5. 풀스크린 와이드 배너 (banner.png 적용) */}
+      <section className="w-full bg-black">
+        <FadeIn>
+           <img src="/banner.png" alt="데이터 비전 배너" className="w-full h-auto object-cover max-h-[700px] opacity-90 hover:opacity-100 transition-opacity duration-500" />
+        </FadeIn>
+      </section>
+
+      {/* 4. 3대 무기 섹션 */}
       <section className="py-24 bg-white px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
@@ -219,7 +232,7 @@ export default function LandingPage() {
               <div className="flex flex-col md:flex-row-reverse items-center gap-12">
                 <div className="flex-1 space-y-6">
                   <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl font-black">2</div>
-                  <h3 className="text-2xl md:text-3xl font-black leading-tight">10초 만에 완성되는<br/><span className="text-blue-600">사업계획서 자동 완성 시스템</span></h3>
+                  <h3 className="text-2xl md:text-3xl font-black leading-tight">단숨에 완성되는<br/><span className="text-blue-600">사업계획서 자동 완성 시스템</span></h3>
                   <p className="text-gray-500 font-medium leading-relaxed text-lg">머리 쥐어짜며 빈칸을 채우지 마세요. 지원금 주관 부처가 가장 좋아하는 핵심 키워드를 녹여내어 전문가급 초안을 즉시 만들어냅니다.</p>
                 </div>
                 <div className="flex-1 w-full bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-inner flex flex-col gap-4 min-h-[300px] justify-center items-center">
@@ -264,7 +277,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. 최종 액션 (Bottom CTA) */}
+      {/* 5. 바텀 액션 */}
       <section className="py-32 bg-gradient-to-br from-blue-600 to-gray-900 text-white text-center px-6">
         <FadeIn>
           <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">
@@ -272,7 +285,7 @@ export default function LandingPage() {
             더 이상 지원금을 남의 이야기로 두지 마세요.
           </h2>
           <p className="text-blue-100 text-lg md:text-xl font-medium mb-12">YM Studio가 사장님의 비즈니스 스케일업을 지원합니다.</p>
-          <Link href="/login" className="inline-block bg-white text-gray-900 font-black text-xl px-12 py-6 rounded-2xl shadow-2xl hover:bg-gray-100 hover:shadow-white/20 transition-all transform hover:scale-105">
+          <Link href="/login" className="inline-block bg-white text-gray-900 font-black text-xl px-12 py-6 rounded-2xl shadow-2xl hover:bg-gray-100 transition-all transform hover:scale-105">
             무료 정밀 진단 시작하기 🚀
           </Link>
         </FadeIn>
