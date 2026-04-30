@@ -30,7 +30,7 @@ const CountUp = ({ end, suffix = "", duration = 2000 }: { end: number, suffix?: 
     window.requestAnimationFrame(step);
   }, [isVisible, end, duration]);
 
-  return <div ref={ref} className="text-4xl md:text-5xl font-black text-blue-600">{count.toLocaleString()}{suffix}</div>;
+  return <div ref={ref} className="text-4xl md:text-5xl font-black text-blue-500">{count.toLocaleString()}{suffix}</div>;
 };
 
 // 🚀 부드러운 페이드인
@@ -85,40 +85,43 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* 1. 히어로 섹션 (홀로그램 여성 이미지 적용) */}
-      <header className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 flex flex-col items-center text-center bg-gradient-to-b from-blue-50 to-white relative">
-        <FadeIn>
-          <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 font-black text-xs md:text-sm rounded-full mb-6 border border-blue-200 shadow-sm">
-            🚀 2026 정부지원금 데이터베이스 업데이트 완료
-          </div>
-        </FadeIn>
-        <FadeIn delay={200}>
-          <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6 text-gray-900">
-            사장님, 올해 놓치신<br className="hidden md:block"/> <span className="text-blue-600">정부지원금이 얼마인지</span> 아시나요?
-          </h1>
-        </FadeIn>
-        <FadeIn delay={400}>
-          <p className="text-gray-500 text-sm md:text-xl font-medium mb-10 max-w-2xl leading-relaxed">
-            매일 쏟아지는 복잡한 공고문, 서류 준비부터 적격성 검토까지.<br className="hidden md:block"/>
-            이제 머니가드 시스템이 알아서 찾아드리고 합격 전략까지 분석해 드립니다.
-          </p>
-        </FadeIn>
-        <FadeIn delay={600}>
-          <Link href="/login" className="inline-block bg-gray-900 text-white font-black text-lg md:text-xl px-10 py-5 rounded-2xl shadow-2xl hover:bg-blue-600 hover:shadow-blue-500/30 transition-all transform hover:scale-105">
-            내 기업 지원금 1분 만에 무료 진단하기 👉
-          </Link>
-        </FadeIn>
+      {/* 🚀 1. 풀스크린 히어로 섹션 (삼성 대기업 스타일) */}
+      <header className="relative w-full min-h-[90vh] flex flex-col items-center justify-center text-center px-6 mt-16">
+        {/* 배경 이미지 & 다크 오버레이 */}
+        <div className="absolute inset-0 z-0">
+          <img src="/hero-mockup.png" alt="백그라운드 홀로그램" className="w-full h-full object-cover object-top" />
+          {/* 이미지가 너무 밝으면 글씨가 안 보일 수 있으니 어두운 막을 하나 씌웁니다 */}
+          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-[1px]"></div> 
+        </div>
 
-        {/* 대형 서비스 이미지 (hero-mockup.png) */}
-        <FadeIn delay={800}>
-          <div className="mt-16 w-full max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-gray-200 relative">
-             <img src="/hero-mockup.png" alt="머니가드 대시보드" className="w-full h-auto object-cover" />
-          </div>
-        </FadeIn>
+        {/* 텍스트 콘텐츠 (z-index 10으로 올려서 이미지 위에 띄움) */}
+        <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+          <FadeIn>
+            <div className="inline-block px-4 py-1.5 bg-blue-500/20 text-blue-300 font-black text-xs md:text-sm rounded-full mb-6 border border-blue-400/30 backdrop-blur-md">
+              🚀 2026 정부지원금 데이터베이스 업데이트 완료
+            </div>
+          </FadeIn>
+          <FadeIn delay={200}>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6 text-white drop-shadow-lg">
+              사장님, 올해 놓치신<br className="hidden md:block"/> <span className="text-blue-400">정부지원금이 얼마인지</span> 아시나요?
+            </h1>
+          </FadeIn>
+          <FadeIn delay={400}>
+            <p className="text-gray-200 text-sm md:text-xl font-medium mb-10 max-w-2xl leading-relaxed drop-shadow-md">
+              매일 쏟아지는 복잡한 공고문, 서류 준비부터 적격성 검토까지.<br className="hidden md:block"/>
+              이제 머니가드 시스템이 알아서 찾아드리고 합격 전략까지 분석해 드립니다.
+            </p>
+          </FadeIn>
+          <FadeIn delay={600}>
+            <Link href="/login" className="inline-block bg-blue-600 text-white font-black text-lg md:text-xl px-10 py-5 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.5)] hover:bg-blue-500 hover:shadow-[0_0_60px_rgba(37,99,235,0.7)] transition-all transform hover:scale-105 border border-blue-400/50">
+              내 기업 지원금 1분 만에 무료 진단하기 👉
+            </Link>
+          </FadeIn>
+        </div>
       </header>
 
       {/* 2. 페인포인트 섹션 */}
-      <section className="py-20 bg-white px-6 mt-10 md:mt-12">
+      <section className="py-20 bg-white px-6">
         <div className="max-w-6xl mx-auto text-center">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-black mb-16 text-gray-900">바쁜 사장님을 대신해 <span className="text-blue-600 border-b-4 border-blue-200">머니가드 시스템이 야근합니다</span></h2>
