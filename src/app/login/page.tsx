@@ -12,7 +12,8 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          // 🚀 [수정] 쿠키 발급소(/auth/callback)를 먼저 거쳐서 출입증을 받고 대시보드로 가도록 우회!
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
         }
       });
 
@@ -38,7 +39,7 @@ export default function LoginPage() {
         </div>
 
 
-        
+
 
         {/* 소셜 로그인 버튼 영역 */}
         <div className="space-y-4">
