@@ -42,7 +42,6 @@ export default function DashboardPage() {
   const [uploadAmount, setUploadAmount] = useState("");
   const [uploadTip, setUploadTip] = useState("");
 
-  // 🚀 게시판 데이터 (hasImage 속성을 추가하여 블러 이미지가 보이도록 세팅)
   const [loungePosts, setLoungePosts] = useState([
     { id: 1, user: "테크*** 사장님", grant: "기술혁신형 중소기업 지원", amount: "5,000만원", date: "1시간 전", text: "머니가드 AI 덕분에 서류 광탈에서 벗어났습니다!", likes: 24, hasImage: true },
     { id: 2, user: "YM*** 대표님", grant: "창업중심대학 지원사업", amount: "7,000만원", date: "3시간 전", text: "지역 매칭 기능이 진짜 신의 한 수네요. 충남 지역 최고!", likes: 12, hasImage: false }
@@ -149,7 +148,6 @@ export default function DashboardPage() {
     }, 800);
   };
 
-  // 🚀 완벽한 이름 마스킹(보안) 로직 추가
   const handleUploadSubmit = () => {
     if (!uploadGrantName || !uploadAmount) return alert("지원금 이름과 수령액을 적어주세요!");
     
@@ -157,20 +155,18 @@ export default function DashboardPage() {
     setTimeout(() => {
       setUploadStep(2); 
       setTimeout(() => {
-        
-        // 🚀 이름의 첫 글자만 빼고 전부 '**' 로 변환합니다. (예: 손지빈 -> 손**)
         const rawName = profile?.company_name || '익명';
         const maskedName = rawName.length > 0 ? rawName.charAt(0) + '**' : '익**';
         
         const newPost = {
           id: Date.now(),
-          user: `${maskedName} 대표님`, // 마스킹된 이름 적용!
+          user: `${maskedName} 대표님`,
           grant: uploadGrantName,
           amount: uploadAmount,
           date: "방금 전",
           text: uploadTip || "머니가드 AI로 합격했습니다! 감사합니다.",
           likes: 0,
-          hasImage: true // 새로 올린 글은 무조건 영수증 이미지가 있다고 처리
+          hasImage: true 
         };
         
         setLoungePosts([newPost, ...loungePosts]); 
@@ -269,6 +265,59 @@ export default function DashboardPage() {
     alert("선택값이 적용된 사업계획서가 복사되었습니다!");
   };
 
+  // 🚀 [추가] HWP 자동 생성 및 다운로드 함수
+  const handleDownloadHWP = () => {
+    if (!aiResult?.draft) return alert("먼저 진단하기를 눌러 사업계획서 초안을 생성해 주세요!");
+
+    // 화면에 선택된 빈칸 값들을 텍스트로 결합
+    const parts = aiResult.draft.split(/(\[빈칸:.*?\])/g);
+    let finalDraft = parts.map((part: string, index: number) => {
+      if (part.startsWith('[빈칸:')) { return editableValues[`field-${index}`] || "____"; }
+      return part;
+    }).join('');
+
+    // 웹의 줄바꿈을 문서용 줄바꿈으로 변환
+    finalDraft = finalDraft.replace(/\n/g, '<br/>');
+
+    // 한글(HWP) 프로그램이 인식할 수 있는 문서 껍데기(스타일) 씌우기
+    const documentContent = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="utf-8">
+        <title>사업계획서 초안</title>
+      </head>
+      <body style="font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; line-height: 1.8; color: #000;">
+        <h1 style="text-align: center; color: #1e3a8a; font-size: 24px;">${selectedGrantTitle} 사업계획서</h1>
+        <hr style="border: solid 1px #000; margin-bottom: 20px;" />
+        <div style="margin-bottom: 30px; font-size: 14px;">
+          <b>▪ 기업명 :</b> ${profile?.company_name || '기업명 미상'}<br/>
+          <b>▪ 작성일 :</b> ${new Date().toLocaleDateString()}<br/>
+        </div>
+        <div style="font-size: 15px;">
+          ${finalDraft}
+        </div>
+        <br/><br/><br/>
+        <hr style="border: dashed 1px #ccc;" />
+        <div style="text-align: center; color: #888; font-size: 12px; margin-top: 10px;">
+          본 문서는 <b>MONEYGUARD (YM Studio)</b>의 정밀 진단 시스템에 의해 자동 생성된 초안입니다.<br/>
+          실제 제출 시 주관기관의 공식 양식(서식)에 맞게 텍스트를 복사하여 활용하시기 바랍니다.
+        </div>
+      </body>
+      </html>
+    `;
+
+    // 브라우저에서 즉시 파일로 구워내서 다운로드 실행
+    const blob = new Blob(['\uFEFF' + documentContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `[MONEYGUARD] ${profile?.company_name || '사업계획서'}_초안.hwp`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (!user) return <div className="min-h-screen flex items-center justify-center text-gray-500">인증 확인 중... 🛡️</div>;
 
   return (
@@ -276,7 +325,6 @@ export default function DashboardPage() {
       
       <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 sticky top-0">
         <div className="flex items-center gap-2 md:gap-3">
-          {/* 🚀 여기 전체가 메인('/')으로 가는 버튼으로 바뀝니다! */}
           <Link href="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity cursor-pointer">
             <img src="/logo.jpeg" alt="로고" className="h-7 md:h-9 w-auto" />
             <div className="h-4 w-[1px] bg-gray-300 mx-1 md:mx-2"></div>
@@ -349,7 +397,6 @@ export default function DashboardPage() {
                     </div>
                     <p className="text-xs text-gray-600 mb-4 leading-relaxed">{post.text}</p>
                     
-                    {/* 🚀 블러 처리된 영수증 썸네일 노출 영역 */}
                     {post.hasImage && (
                       <div className="relative w-full h-24 mb-4 bg-gray-200 rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center">
                         <div className="absolute inset-0 bg-white opacity-40 filter blur-sm"></div>
@@ -447,7 +494,8 @@ export default function DashboardPage() {
                     <h3 className="text-xs md:text-sm font-black text-gray-800">STEP 3. 전문가급 사업계획서 초안</h3>
                     <div className="flex gap-2 w-full md:w-auto">
                       <button onClick={handleCopy} className="flex-1 md:flex-none px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold hover:bg-gray-50 cursor-pointer shadow-sm">📋 복사하기</button>
-                      <button onClick={() => alert("정식 정부 양식(HWP) 자동 매핑 기능은 추후 정식 런칭 시 업데이트 됩니다.")} className="flex-1 md:flex-none px-3 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 cursor-pointer shadow-md">📝 HWP 다운로드</button>
+                      {/* 🚀 변경됨: 이제 경고창이 아니라 진짜 파일이 다운로드 됩니다! */}
+                      <button onClick={handleDownloadHWP} className="flex-1 md:flex-none px-3 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 cursor-pointer shadow-md transition-transform transform hover:-translate-y-0.5">📝 HWP 다운로드</button>
                     </div>
                   </div>
                   <div className="p-4 md:p-8">
@@ -464,15 +512,15 @@ export default function DashboardPage() {
           <footer className="w-full bg-white text-gray-500 py-10 px-6 mt-auto border-t border-gray-200 text-xs">
             <div className="max-w-6xl mx-auto flex flex-col gap-8">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div><h4 className="font-black text-gray-800 text-sm mb-3">MONEYGUARD AI</h4><p className="leading-relaxed">망설임의 시간을 확신으로.<br/>AI 기반 정부지원금 정밀 분석 서비스.</p></div>
+                <div><h4 className="font-black text-gray-800 text-sm mb-3">MONEYGUARD</h4><p className="leading-relaxed">망설임의 시간을 확신으로.<br/>정부지원금 정밀 분석 서비스.</p></div>
                 <div><h4 className="font-bold text-gray-700 mb-3">서비스</h4><ul className="space-y-2"><li><a href="#" className="hover:text-blue-600 transition-colors">메인 홈</a></li><li><a href="#" className="hover:text-blue-600 transition-colors">실시간 매칭 진단</a></li></ul></div>
                 <div><h4 className="font-bold text-gray-700 mb-3">고객지원 및 약관</h4><ul className="space-y-2"><li><a href="#" className="hover:text-blue-600 transition-colors">이용약관</a></li><li><a href="#" className="font-bold text-gray-800 hover:text-blue-600 transition-colors">개인정보처리방침</a></li><li><a href="#" className="hover:text-blue-600 transition-colors">환불정책</a></li></ul></div>
-                <div><h4 className="font-bold text-gray-700 mb-3">제휴 및 고지</h4><p className="text-[11px] leading-relaxed text-gray-400">MONEYGUARD AI는 인공지능 기반 분석 정보를 제공할 뿐, 최종 선택과 결제에 대한 책임은 사용자 본인에게 있습니다.<br/><br/>정부 지원사업 선정 여부는 제출하시는 증빙 서류와 주관 기관의 기준에 따르며, 당사는 탈락에 대한 어떠한 법적 책임도 지지 않습니다.</p></div>
+                <div><h4 className="font-bold text-gray-700 mb-3">제휴 및 고지</h4><p className="text-[11px] leading-relaxed text-gray-400">MONEYGUARD는 인공지능 기반 분석 정보를 제공할 뿐, 최종 선택과 결제에 대한 책임은 사용자 본인에게 있습니다.<br/><br/>정부 지원사업 선정 여부는 제출하시는 증빙 서류와 주관 기관의 기준에 따르며, 당사는 탈락에 대한 어떠한 법적 책임도 지지 않습니다.</p></div>
               </div>
               <div className="pt-6 border-t border-gray-100 text-[11px] text-gray-400 flex flex-col items-center md:items-start gap-2">
                 <div className="flex flex-wrap justify-center md:justify-start gap-x-3 gap-y-1"><span>상호명 : 와이엠 스튜디오 (YM Studio)</span><span className="hidden md:inline">|</span><span>대표 : 손용민</span><span className="hidden md:inline">|</span><span>사업자등록번호 : 510-21-21827</span><span className="hidden md:inline">|</span><span>통신판매업신고 : 통신판매업 신고 진행 중</span></div>
                 <div className="flex flex-wrap justify-center md:justify-start gap-x-3 gap-y-1"><span>고객센터 : 0507-1385-9994</span><span className="hidden md:inline">|</span><span>이메일 : support@ymstudio.co.kr</span><span className="hidden md:inline">|</span><span>사업장 소재지 : 충청남도 아산시 둔포면 운교길129번길 14-71, 402호(노블레스타운 2차)</span></div>
-                <p className="mt-4 w-full text-center md:text-left">© 2026 YM Studio & MONEYGUARD AI. All rights reserved.</p>
+                <p className="mt-4 w-full text-center md:text-left">© 2026 YM Studio & MONEYGUARD. All rights reserved.</p>
               </div>
             </div>
           </footer>
@@ -530,7 +578,7 @@ export default function DashboardPage() {
                 <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-blue-100">🧾</div>
                 <h2 className="text-xl font-black mb-2 text-gray-800">수령 인증 등록</h2>
                 <p className="text-xs text-gray-500 mb-6 bg-gray-50 p-3 rounded-lg border border-gray-100">
-                  <span className="font-bold text-red-500">안심하세요!</span><br/>업로드된 영수증/입금 내역의 개인정보(이름, 계좌번호 등)는 AI가 자동으로 스캔하여 <span className="font-bold text-gray-800">모자이크(블러) 처리</span> 후 게시됩니다.
+                  <span className="font-bold text-red-500">안심하세요!</span><br/>업로드된 영수증/입금 내역의 개인정보(이름, 계좌번호 등)는 시스템이 자동으로 스캔하여 <span className="font-bold text-gray-800">모자이크(블러) 처리</span> 후 게시됩니다.
                 </p>
                 <div className="space-y-3 mb-6 text-left">
                   <input type="text" value={uploadGrantName} onChange={e => setUploadGrantName(e.target.value)} placeholder="어떤 지원금을 수령하셨나요?" className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm font-bold" />
@@ -553,7 +601,7 @@ export default function DashboardPage() {
             {uploadStep === 1 && (
               <div className="py-10">
                 <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                <h3 className="text-lg font-black text-gray-800 mb-2">AI 개인정보 보호 중...</h3>
+                <h3 className="text-lg font-black text-gray-800 mb-2">개인정보 보호 중...</h3>
                 <p className="text-xs text-gray-500">영수증 내 민감 정보를 감지하여 모자이크 처리하고 있습니다.</p>
               </div>
             )}
@@ -577,7 +625,7 @@ export default function DashboardPage() {
             <div className="bg-blue-600 p-3 flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-2">
                 <img src="/logo.jpeg" alt="로고" className="w-6 h-6 rounded-full bg-white object-contain" />
-                <span className="text-white font-black text-sm">AI 지원금 컨설턴트</span>
+                <span className="text-white font-black text-sm">지원금 컨설턴트</span>
               </div>
               <button onClick={() => setIsChatOpen(false)} className="text-white hover:text-gray-200 font-bold">✕</button>
             </div>
