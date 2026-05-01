@@ -37,6 +37,9 @@ export default function LoginPage() {
           </p>
         </div>
 
+
+        
+
         {/* 소셜 로그인 버튼 영역 */}
         <div className="space-y-4">
           
