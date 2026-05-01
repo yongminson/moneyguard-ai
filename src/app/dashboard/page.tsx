@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/db'; 
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -275,11 +276,17 @@ export default function DashboardPage() {
       
       <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 sticky top-0">
         <div className="flex items-center gap-2 md:gap-3">
-          <img src="/logo.jpeg" alt="로고" className="h-7 md:h-9 w-auto" />
-          <div className="h-4 w-[1px] bg-gray-300 mx-1 md:mx-2"></div>
-          <span className="text-xs md:text-sm font-bold text-gray-700 truncate max-w-[120px] md:max-w-none">{profile?.company_name || '대표님'}</span>
+          {/* 🚀 여기 전체가 메인('/')으로 가는 버튼으로 바뀝니다! */}
+          <Link href="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+            <img src="/logo.jpeg" alt="로고" className="h-7 md:h-9 w-auto" />
+            <div className="h-4 w-[1px] bg-gray-300 mx-1 md:mx-2"></div>
+            <span className="font-black text-lg tracking-tight text-gray-900">MONEYGUARD</span>
+          </Link>
         </div>
-        <button onClick={() => supabase.auth.signOut().then(() => router.push('/login'))} className="text-[10px] md:text-xs text-gray-400 font-bold hover:text-red-500 cursor-pointer transition-colors">로그아웃</button>
+        <div className="flex items-center gap-4">
+          <span className="text-xs md:text-sm font-bold text-blue-600 truncate max-w-[120px] md:max-w-none bg-blue-50 px-3 py-1 rounded-full">{profile?.company_name || '대표님'}</span>
+          <button onClick={() => supabase.auth.signOut().then(() => router.push('/login'))} className="text-[10px] md:text-xs text-gray-400 font-bold hover:text-red-500 cursor-pointer transition-colors">로그아웃</button>
+        </div>
       </nav>
 
       <main className="flex-1 flex flex-col md:flex-row h-full overflow-hidden">
