@@ -527,15 +527,15 @@ export default function DashboardPage() {
         </section>
       </main>
 
-      {/* 🚀 1. 사업자 프로파일링 모달 */}
+      {/* 🚀 1. 기업 기초 정보 모달 */}
       {showProfileModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
           <div className="bg-white p-6 md:p-10 rounded-3xl shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex items-center gap-3 mb-2">
                <img src="/logo.jpeg" alt="로고" className="h-10 w-auto rounded-lg shadow-sm" />
-               <h2 className="text-xl md:text-2xl font-black">합격 확률 분석 데이터 등록</h2>
+               <h2 className="text-xl md:text-2xl font-black">기업 기초 정보 등록</h2>
             </div>
-            <p className="text-gray-400 mb-4 md:mb-6 text-xs md:text-sm font-medium">YM Studio 대표님, 정보를 입력하면 정밀 진단이 시작됩니다.</p>
+            <p className="text-gray-400 mb-4 md:mb-6 text-xs md:text-sm font-medium">정확한 맞춤형 지원금 매칭을 위해 필수 정보를 입력해 주세요.</p>
             <div className="space-y-3 md:space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 <input type="text" placeholder="사업자번호 10자리" value={businessNumber} onChange={(e) => setBusinessNumber(e.target.value)} className="p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm" />
@@ -549,10 +549,31 @@ export default function DashboardPage() {
                 </select>
                 <input type="number" placeholder="직원 수 (명)" value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value)} className="p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm" />
               </div>
-              <input type="text" placeholder="상호명 (YM Studio)" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm" />
+              {/* 🚀 상호명 예시 수정 */}
+              <input type="text" placeholder="상호명 (예: 와이엠스튜디오)" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm" />
               <div className="grid grid-cols-2 gap-3 md:gap-4">
+                {/* 🚀 지역 선택 확장예정 표시 및 비활성화 처리 */}
                 <select value={region} onChange={(e) => setRegion(e.target.value)} className="p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none cursor-pointer text-sm font-bold">
-                  <option value="">지역 선택</option><option value="서울">서울특별시</option><option value="경기">경기도</option><option value="인천">인천광역시</option><option value="강원">강원도</option><option value="충남">충청남도</option><option value="충북">충청북도</option><option value="대전">대전광역시</option><option value="세종">세종특별자치시</option><option value="전남">전라남도</option><option value="전북">전라북도</option><option value="광주">광주광역시</option><option value="경남">경상남도</option><option value="경북">경상북도</option><option value="부산">부산광역시</option><option value="대구">대구광역시</option><option value="울산">울산광역시</option><option value="제주">제주특별자치도</option><option value="전국">전국(해당없음)</option>
+                  <option value="">지역 선택</option>
+                  <option value="서울">서울특별시</option>
+                  <option value="경기">경기도</option>
+                  <option value="충남">충청남도</option>
+                  <option value="" disabled>--- 미지원 지역 ---</option>
+                  <option value="인천" disabled>인천광역시 (곧 확장예정)</option>
+                  <option value="강원" disabled>강원도 (곧 확장예정)</option>
+                  <option value="충북" disabled>충청북도 (곧 확장예정)</option>
+                  <option value="대전" disabled>대전광역시 (곧 확장예정)</option>
+                  <option value="세종" disabled>세종특별자치시 (곧 확장예정)</option>
+                  <option value="전남" disabled>전라남도 (곧 확장예정)</option>
+                  <option value="전북" disabled>전라북도 (곧 확장예정)</option>
+                  <option value="광주" disabled>광주광역시 (곧 확장예정)</option>
+                  <option value="경남" disabled>경상남도 (곧 확장예정)</option>
+                  <option value="경북" disabled>경상북도 (곧 확장예정)</option>
+                  <option value="부산" disabled>부산광역시 (곧 확장예정)</option>
+                  <option value="대구" disabled>대구광역시 (곧 확장예정)</option>
+                  <option value="울산" disabled>울산광역시 (곧 확장예정)</option>
+                  <option value="제주" disabled>제주특별자치도 (곧 확장예정)</option>
+                  <option value="전국" disabled>전국 (곧 확장예정)</option>
                 </select>
                 <select value={industry} onChange={(e) => setIndustry(e.target.value)} className="p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none cursor-pointer text-sm font-bold truncate">
                   <option value="">업종 선택</option><option value="정보통신업">정보통신업 (IT/소프트웨어)</option><option value="제조업">제조업</option><option value="도매 및 소매업">도매 및 소매업</option><option value="건설업">건설업</option><option value="전문, 과학 및 기술 서비스업">전문, 과학 및 기술 서비스업</option><option value="숙박 및 음식점업">숙박 및 음식점업</option><option value="교육 서비스업">교육 서비스업</option><option value="보건 및 사회복지 서비스업">보건 및 사회복지 서비스업</option><option value="예술, 스포츠 및 여가 서비스업">예술, 스포츠 및 여가 서비스업</option><option value="기타 서비스업">기타 개인/협회 서비스업</option>
@@ -560,7 +581,7 @@ export default function DashboardPage() {
               </div>
               <textarea placeholder="핵심 아이템 상세 설명" value={mainItem} onChange={(e) => setMainItem(e.target.value)} className="w-full p-3 md:p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none h-20 md:h-24 focus:border-blue-500 font-bold text-sm" />
               <button onClick={handleSaveProfile} disabled={isSaving} className="w-full bg-blue-600 text-white font-black py-4 md:py-5 rounded-2xl shadow-xl hover:bg-blue-700 cursor-pointer transition-all transform hover:-translate-y-1">
-                {isSaving ? "동기화 중..." : "정밀 매칭 시작하기 🚀"}
+                {isSaving ? "저장 중..." : "정밀 매칭 시작하기 🚀"}
               </button>
             </div>
           </div>
