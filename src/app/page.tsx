@@ -304,7 +304,7 @@ export default function LandingPage() {
             <div><h4 className="font-bold text-gray-700 mb-3">제휴 및 고지</h4><p className="text-[11px] leading-relaxed text-gray-400">MONEYGUARD는 데이터 기반 분석 정보를 제공할 뿐, 최종 선택과 결제에 대한 책임은 사용자 본인에게 있습니다.</p></div>
           </div>
           <div className="pt-6 border-t border-gray-100 text-[11px] text-gray-400 flex flex-col items-center md:items-start gap-2">
-            <div className="flex flex-wrap justify-center md:justify-start gap-x-3 gap-y-1"><span>상호명 : 와이엠 스튜디오 (YM Studio)</span><span className="hidden md:inline">|</span><span>대표 : 손용민</span><span className="hidden md:inline">|</span><span>사업자등록번호 : 510-21-21827</span><span className="hidden md:inline">|</span><span>통신판매업신고 : 통신판매업 신고 진행 중</span></div>
+            <div className="flex flex-wrap justify-center md:justify-start gap-x-3 gap-y-1"><span>상호명 : 와이엠 스튜디오 (YM Studio)</span><span className="hidden md:inline">|</span><span>대표 : 손용민</span><span className="hidden md:inline">|</span><span>사업자등록번호 : 510-21-21827</span><span className="hidden md:inline">|</span><span>통신판매업신고 : 제 2026-충남아산-0479 호</span></div>
             <div className="flex flex-wrap justify-center md:justify-start gap-x-3 gap-y-1"><span>고객센터 : 0507-1385-9994</span><span className="hidden md:inline">|</span><span>이메일 : support@ymstudio.co.kr</span><span className="hidden md:inline">|</span><span>사업장 소재지 : 충청남도 아산시 둔포면 운교길129번길 14-71, 402호(노블레스타운 2차)</span></div>
             <p className="mt-4 w-full text-center md:text-left">© 2026 YM Studio & MONEYGUARD. All rights reserved.</p>
           </div>
